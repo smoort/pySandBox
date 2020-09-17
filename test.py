@@ -8,8 +8,8 @@ import cv2
 image = mpimg.imread('../images/exit-ramp.jpg')
 print("image shape = ", image.shape)
 gray = cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
-plt.imshow(gray, cmap='gray')
-plt.show()
+#plt.imshow(gray, cmap='gray')
+#plt.show()
 
 # Pull out the x and y sizes and make a copy of the image
 ysize = image.shape[0]
@@ -40,13 +40,13 @@ masked_edges = cv2.Canny(blur_gray, low_threshold, high_threshold)
 
 plt.imshow(masked_edges, cmap='gray')
 plt.show()
-
+                                                                                                                                                                                                                                                                                
 # Define the Hough transform parameters
 # Make a blank the same size as our image to draw on
 rho = 1
 theta = np.pi/180
 threshold = 30
-min_line_length = 10
+min_line_length = 100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 max_line_gap = 10
 line_image = np.copy(image)*0 #creating a blank to draw lines on
 
@@ -78,9 +78,6 @@ color_thresholds = (line_image[:,:,0] != rgb_threshold[0]) | \
 # Create a "color" binary image to combine with line image
 color_edges = np.dstack((masked_edges, masked_edges, masked_edges)) 
 
-plt.imshow(color_edges)
-plt.show()
-
 # Find the region inside the lines
 XX, YY = np.meshgrid(np.arange(0, xsize), np.arange(0, ysize))
 region_thresholds = (YY > (XX*fit_left[0] + fit_left[1])) & \
@@ -99,14 +96,11 @@ plt.show()
 
 myline_image = np.copy(image)
 # Find where image is both colored right and in the region
-myline_image[~color_thresholds & region_thresholds] = [0,255,0]
+myline_image[~color_thresholds & region_thresholds] = [255,0,0]
 #myline_image[~color_thresholds & ~region_thresholds] = [0,0,0]
 
-print("after myline image1")
 plt.imshow(myline_image)
-print("after myline image2")
 plt.show()
-print("after myline image3")
 
 # Draw the lines on the edge image
 #combo = cv2.addWeighted(color_edges, 0.8, line_image, 1, 0) 
