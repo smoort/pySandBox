@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct  1 18:06:28 2020
+
+@author: ms
+"""
+
+import cv2
+import numpy as np 
+import matplotlib.pyplot as plt
+
+img = cv2.imread('../images/exit-ramp.jpg') #read image as grayscale
+
+plt.imshow(img)
+plt.show()
+
+roi_left_top = [360, 330]
+roi_right_top = [600, 330]
+roi_right_bottom = [910, 539]
+roi_mid_right_bottom = [700,539]
+roi_mid_right_top = [550, 400]
+roi_mid_left_top = [410,400]
+roi_mid_left_bottom = [260,539]
+roi_left_bottom = [50, 539]
+vertices = np.array([roi_left_bottom,roi_left_top,
+                     roi_right_top,roi_right_bottom, 
+                    roi_mid_right_bottom, roi_mid_right_top,
+                    roi_mid_left_top, roi_mid_left_bottom], np.int32)
+#defining a blank mask to start with
+masked_image = np.copy(img)
+
+outer_mask = np.zeros_like(masked_image)   
+channel_count = img.shape[2]  # i.e. 3 or 4 depending on your image
+ignore_mask_color = (255,) * channel_count
+#ignore_mask_color = 255
+        
+#filling pixels inside the polygon defined by "vertices" with the fill color    
+cv2.fillPoly(outer_mask, np.int32([vertices]), ignore_mask_color)
+
+#returning the image only where mask pixels are nonzero
+masked_image = cv2.bitwise_and(masked_image, outer_mask)
+
+plt.imshow(masked_image)
+plt.show()

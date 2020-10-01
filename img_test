@@ -1,0 +1,26 @@
+# Do relevant imports
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import numpy as np
+import cv2
+
+#from scipy import stats
+
+# Read in and grayscale the image
+image = mpimg.imread('../images/solidWhiteCurve.jpg')
+#image = mpimg.imread('../images/test.jpg')
+plt.imshow(image)
+plt.show()
+
+color_select = np.copy(image)
+rgb_threshold = [100, 100, 100]
+
+# Identify pixels below the threshold
+thresholds = (image[:,:,0] < rgb_threshold[0]) \
+            | (image[:,:,1] < rgb_threshold[1]) \
+            | (image[:,:,2] < rgb_threshold[2])
+color_select[thresholds] = [0,0,0]
+
+# Display the image                 
+plt.imshow(color_select)
+plt.show()
