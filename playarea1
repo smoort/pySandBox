@@ -6,40 +6,56 @@ Created on Thu Oct  1 18:06:28 2020
 @author: ms
 """
 
-import cv2
 import numpy as np 
-import matplotlib.pyplot as plt
+import pandas as pd 
+import matplotlib.pyplot as plt 
+  
+from sklearn.cluster import DBSCAN 
+from sklearn.preprocessing import StandardScaler 
+from sklearn.preprocessing import normalize 
+from sklearn.decomposition import PCA 
 
-img = cv2.imread('../images/exit-ramp.jpg') #read image as grayscale
 
-plt.imshow(img)
-plt.show()
+slopes =  [-0.575, -0.5522788203753352, -0.6533333333333333, -0.5771812080536913, -0.6235294117647059, -0.5842696629213483, -0.5652173913043478, -0.6481481481481481]
+intercepts =  [506.275, 497.946380697051, 543.8, 508.3691275167786, 523.8588235294118, 512.8202247191011, 504.695652173913, 539.2407407407408]
 
-roi_left_top = [360, 330]
-roi_right_top = [600, 330]
-roi_right_bottom = [910, 539]
-roi_mid_right_bottom = [700,539]
-roi_mid_right_top = [550, 400]
-roi_mid_left_top = [410,400]
-roi_mid_left_bottom = [260,539]
-roi_left_bottom = [50, 539]
-vertices = np.array([roi_left_bottom,roi_left_top,
-                     roi_right_top,roi_right_bottom, 
-                    roi_mid_right_bottom, roi_mid_right_top,
-                    roi_mid_left_top, roi_mid_left_bottom], np.int32)
-#defining a blank mask to start with
-masked_image = np.copy(img)
+"""
+dict = {'slope': slopes, 'intercept': intercepts} 
+df = pd.DataFrame(dict)
 
-outer_mask = np.zeros_like(masked_image)   
-channel_count = img.shape[2]  # i.e. 3 or 4 depending on your image
-ignore_mask_color = (255,) * channel_count
-#ignore_mask_color = 255
-        
-#filling pixels inside the polygon defined by "vertices" with the fill color    
-cv2.fillPoly(outer_mask, np.int32([vertices]), ignore_mask_color)
+print(df.head())
 
-#returning the image only where mask pixels are nonzero
-masked_image = cv2.bitwise_and(masked_image, outer_mask)
+# Numpy array of all the cluster labels assigned to each data point 
+db_default = DBSCAN(eps = 0.0375, min_samples = 3).fit(df) 
+labels = db_default.labels_ 
 
-plt.imshow(masked_image)
+# Building the label to colour mapping 
+colours = {} 
+colours[0] = 'r'
+colours[1] = 'g'
+colours[2] = 'b'
+colours[-1] = 'k'
+
+# Building the colour vector for each data point 
+cvec = [colours[label] for label in labels] 
+
+# For the construction of the legend of the plot 
+r = plt.scatter(df['slope'], df['intercept'], color ='r'); 
+g = plt.scatter(df['slope'], df['intercept'], color ='g'); 
+b = plt.scatter(df['slope'], df['intercept'], color ='b'); 
+k = plt.scatter(df['slope'], df['intercept'], color ='k'); 
+
+# Plotting slope on the X-Axis and intercept on the Y-Axis 
+# according to the colour vector defined 
+plt.figure(figsize =(9, 9)) 
+plt.scatter(df['slope'], df['intercept'], c = cvec) 
+
+# Building the legend 
+plt.legend((r, g, b, k), ('Label 0', 'Label 1', 'Label 2', 'Label -1')) 
+plt.show() 
+
+"""
+plt.scatter(slopes, intercepts)
+plt.xlabel('slope')
+plt.ylabel('intercept')
 plt.show()
